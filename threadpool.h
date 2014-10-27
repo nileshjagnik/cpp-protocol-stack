@@ -15,9 +15,11 @@ private:
 };
 
 ThreadPool::ThreadPool() {
+    // default constructor
     ThreadPool(10);
 }
-ThreadPool::ThreadPool(size_t tc){
+ThreadPool::ThreadPool(size_t tc) {
+    // Initialize threadpool with size tc 
     threadCount = tc;
     pool.resize((int)tc);
     for(int i=0;i<(int)tc;i++) {
@@ -28,6 +30,7 @@ ThreadPool::ThreadPool(size_t tc){
 
 ThreadPool::~ThreadPool( )
 {
+    // threadpool destructor
     pool.clear();
 }
 
