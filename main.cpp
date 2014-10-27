@@ -11,8 +11,12 @@ using namespace std;
 
 int main(){
     ThreadPool *t = new ThreadPool(10);
-    if (t->thread_avail()) {
+    //if (t->thread_avail()) {
         //int number=t.dispatch_thread(,,);    
-    }
+    //}
+    
     delete t;
+    
+    int *p = new int(4);
+    cout<<*p<<endl;
 }

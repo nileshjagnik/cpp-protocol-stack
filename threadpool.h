@@ -11,7 +11,8 @@ public:
     
 private:
     size_t threadCount;
-    vector<pthread_t*> pool; 
+    vector<pthread_t*> pool;
+    vector<*bool> status_flags;
 };
 
 ThreadPool::ThreadPool() {
@@ -22,24 +23,34 @@ ThreadPool::ThreadPool(size_t tc) {
     // Initialize threadpool with size tc 
     threadCount = tc;
     pool.resize((int)tc);
+    status_flags((int)tc);
     for(int i=0;i<(int)tc;i++) {
         pool[i] = (pthread_t *) malloc(sizeof(pthread_t));
+        *status_flags[i]=true;
     }
-    //TODO - Maybe there is more to do?
 }
 
 ThreadPool::~ThreadPool( )
 {
     // threadpool destructor
     pool.clear();
+    status_flags.clear();
 }
 
 int ThreadPool::dispatch_thread(void dispatch_function(void*), void *arg){
-    //TODO - dispatch    
+    for(int i=0;i<(int)threadCount;i++) {
+        if (*status_flag[i]==true) {
+            
+        }
+    }
     return 0;
 }
 
 bool ThreadPool::thread_avail(){
-    //TODO - return available
-    return true;
+    for(int i=0;i<(int)threadCount;i++) {
+        if (*status_flag[i]==true) {
+            return true;
+        }
+    }
+    return false;
 }

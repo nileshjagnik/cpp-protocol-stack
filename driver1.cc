@@ -22,16 +22,16 @@ main ( )
 	ThreadPool th(3);
 	int max[20];
 
-    	for (int i = 0; i < 5; i++) {
-		    for (int j = 0; j < 4; j++) {
-			    max[(i*4)+j] = 100 * ((i * 4) + j);
-			    if (th.thread_avail())
-			        th.dispatch_thread(test_fn,(void *)&(max[(i*4)+j]));
-			    else
-		       		cout << "No thread is avalable for "<< max[(i*4)+j] << endl;
-		    }
-		    sleep(6);        
-    	} 
+	for (int i = 0; i < 5; i++) {
+	    for (int j = 0; j < 4; j++) {
+		    max[(i*4)+j] = 100 * ((i * 4) + j);
+		    if (th.thread_avail())
+		        th.dispatch_thread(test_fn,(void *)&(max[(i*4)+j]));
+		    else
+	       		cout << "No thread is avalable for "<< max[(i*4)+j] << endl;
+	    }
+	    sleep(6);
+	}
 }
 
 
