@@ -28,7 +28,7 @@ main ( )
 			    if (th.thread_avail())
 			        th.dispatch_thread(test_fn,(void *)&(max[(i*4)+j]));
 			    else
-		       		cout << "No thread is avalable for "
+		       		cout << "No thread is avalable for "<< max[(i*4)+j] << endl;
 		    }
 		    sleep(6);        
     	} 
