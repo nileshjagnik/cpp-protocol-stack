@@ -22,35 +22,38 @@ main ( )
 
     char *h3 = new char[24];
     for (int i = 0; i < 24; i++) h3[i] = 'm';
-
+    
+    
     Message *m = new Message(b1, 100);
+    
     m->msgAddHdr(h1, 5);
     m->msgAddHdr(h2, 4);
     m->msgAddHdr(h3, 24);
     cout << "Message length = " << m->msgLen( ) << endl;
     
+    
     char* buf = new char[140];
     m->msgFlat(buf);
     buf[m->msgLen ( )] = '\n';
     cout << "Message: " << buf << endl;
-
+    
     Message m2;
-
+    
     m->msgSplit(m2, 50);
     cout << "Message length of m = " << m->msgLen( ) << endl;
     char* bufx = new char[140];
     m->msgFlat(bufx);
     bufx[m->msgLen ( )] = '\n';
     cout << "Message: " << bufx << endl;
-
-
+    
+    
     cout << "Message length of m2 = " << m2.msgLen( ) << endl;
     char* bufy = new char[140];
     m2.msgFlat(bufy);
+    
     bufy[m2.msgLen ( )] = '\n';
     cout << "Message: " << bufy << endl;
-
-
+    
 
     Message *m1 = new Message(buf, 133);
     char *c1 = m1->msgStripHdr(24);
@@ -76,7 +79,7 @@ main ( )
     buf[m1->msgLen ( )] = '\n';
     cout << "Message: " << buf1 << endl;
 
-    m1->msgJoin(m2);
+   /* m1->msgJoin(m2);
     char* bufz = new char[400];
     m1->msgFlat(bufz);
     bufz[m1->msgLen ( )] = '\n';
@@ -88,7 +91,7 @@ main ( )
     char* bufa = new char[500];
     m->msgFlat(bufa);
     bufa[m->msgLen ( )] = '\n';
-    cout << "Message: " << bufa << endl;
+    cout << "Message: " << bufa << endl;*/
 
 }
 

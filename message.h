@@ -1,9 +1,5 @@
-/*********************/
-/* This is the most primitive implementation of the Message library.
-*/
-
-/* Written by: Shiv Mishra on October 20, 2014 */
-/* Last update: October 20, 2014 */
+#include<list>
+using namespace std;
 
 class Message
 {
@@ -21,73 +17,71 @@ public:
 
 private:
     size_t msglen;
-    char *msg_content;
+    list<char*> *msg_list=NULL;
+
 };
 
 Message::Message()
 {
-    msglen = 0;
-    msg_content = NULL;
+    msglen=0;
+    msg_list = new list<char*>();
 }
 
 Message::Message(char* msg, size_t len)
 {
     msglen = len;
-    msg_content = new char[len];
-    memcpy(msg_content, msg, len);
+    msg_list = new list<char*>();
+    for (int i=0;i<(int)len;i++) {
+        msg_list->push_back(msg+i);
+    }
+    
 }
 
 Message::~Message( )
 {
-    delete msg_content;
+    delete msg_list;
 }
 
 void Message::msgAddHdr(char *hdr, size_t length)
 {
-    char *new_msg_content;
-    new_msg_content = new char[msglen + length];
-    memcpy(new_msg_content, hdr, length);
-    memcpy(new_msg_content + length, msg_content, msglen);
-    delete msg_content;
-    msg_content = new_msg_content;
+    for (int i=0;i<(int)length;i++) {
+        msg_list->push_front(hdr+(int)length-i-1);
+    }
     msglen += length;
 }
 
 char* Message::msgStripHdr(int len)
 {
-    char *new_msg_content;
     char *stripped_content;
-
     if ((msglen < len) || (len == 0)) return NULL;
-    new_msg_content = new char[msglen - len];
     stripped_content = new char[len];
-    memcpy(stripped_content, msg_content, len);
-    memcpy(new_msg_content, msg_content + len, msglen - len);
+    for (int i=0;i<(int)len;i++) {
+        stripped_content[i]=*(msg_list->front());
+        msg_list->pop_front();
+    }
     msglen -= len;
-    delete msg_content;
-    msg_content = new_msg_content;
     return stripped_content;
 }
 
 int Message::msgSplit(Message& secondMsg, size_t len)
 {
-    char *content = msg_content;
     size_t length = msglen;
 
     if ((len < 0) || (len > msglen)) return 0;
 
-    msg_content = new char[len];
     msglen = len;
-    memcpy(msg_content, content, len);
-    secondMsg.msglen = length - len;
-    secondMsg.msg_content = new char[secondMsg.msglen];
-    memcpy(secondMsg.msg_content, content + len, secondMsg.msglen);
-    delete content;
+    
+    for(int i=(int)length-1;i>(int)len;i--){
+        secondMsg.msg_list->push_front(msg_list->back());
+        secondMsg.msglen = length-len;
+        msg_list->pop_back();
+    }
     return 1;
 }
 
 void Message::msgJoin(Message& secondMsg)
-{
+{   
+    /*
     char *content = msg_content;
     size_t length = msglen;
 
@@ -99,6 +93,7 @@ void Message::msgJoin(Message& secondMsg)
     delete secondMsg.msg_content;
     secondMsg.msg_content = NULL;
     secondMsg.msglen = 0;
+    */
 }
 
 size_t Message::msgLen( )
@@ -109,7 +104,9 @@ size_t Message::msgLen( )
 void Message::msgFlat(char *buffer)
 {
 //Assume that sufficient memory has been allocated in buffer
-
-    memcpy(buffer, msg_content, msglen);
+    int i=0;
+    for (list<char*>::iterator it = msg_list->begin(); it != msg_list->end(); it++,i++) {
+        *(buffer+i) = *(*it);
+    }
 }
 
