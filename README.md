@@ -7,6 +7,8 @@ Testing
 =======
 There are three test files:
 
-[driver1.cc](driver1.cc) tests Thread Pool library
-[driver2.cc](driver2.cc) tests Event Scheduler library
-[driver3.cc](driver3.cc) tests message library
+[driver1.cc](driver1.cc) tests Thread Pool library.
+
+[driver2.cc](driver2.cc) tests Event Scheduler library.
+
+[driver3.cc](driver3.cc) tests message library.
