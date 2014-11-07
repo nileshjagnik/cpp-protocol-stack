@@ -71,11 +71,11 @@ int Message::msgSplit(Message& secondMsg, size_t len)
 
     msglen = len;
     
-    for(int i=(int)length-1;i>(int)len;i--){
+    for(int i=(int)length-1;i>=(int)len;i--){
         secondMsg.msg_list->push_front(msg_list->back());
-        secondMsg.msglen = length-len;
         msg_list->pop_back();
     }
+    secondMsg.msglen = length-len;
     return 1;
 }
 
