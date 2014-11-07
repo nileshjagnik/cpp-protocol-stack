@@ -4,7 +4,6 @@
 #include <string.h>
 #include <vector>
 #include <utility>
-#include <pthread.h>
 #include "threadpool.h"
 #include "message.h"
 
