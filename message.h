@@ -81,19 +81,13 @@ int Message::msgSplit(Message& secondMsg, size_t len)
 
 void Message::msgJoin(Message& secondMsg)
 {   
-    /*
-    char *content = msg_content;
-    size_t length = msglen;
-
-    msg_content = new char[msglen + secondMsg.msglen];
-    msglen += secondMsg.msglen;
-    memcpy(msg_content, content, length);
-    memcpy(msg_content + length, secondMsg.msg_content, secondMsg.msglen);
-    delete content;
-    delete secondMsg.msg_content;
-    secondMsg.msg_content = NULL;
-    secondMsg.msglen = 0;
-    */
+    size_t len;
+    len = secondMsg.msgLen();
+    for(int i=0;i<(int)len;i++){
+        msg_list->push_back(secondMsg.msg_list->front());
+        secondMsg.msg_list->pop_front();
+    }
+    msglen+=len;
 }
 
 size_t Message::msgLen( )
@@ -103,7 +97,7 @@ size_t Message::msgLen( )
 
 void Message::msgFlat(char *buffer)
 {
-//Assume that sufficient memory has been allocated in buffer
+    //Assume that sufficient memory has been allocated in buffer
     int i=0;
     for (list<char*>::iterator it = msg_list->begin(); it != msg_list->end(); it++,i++) {
         *(buffer+i) = *(*it);
