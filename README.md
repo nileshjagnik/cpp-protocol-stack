@@ -3,6 +3,10 @@ cpp-protocol-stack
 
 Implement a network protocol stack using process per message model. To get a clear idea about the project read [pa3.pdf](pa3.pdf)
 
+Compiling Instructions
+=====================
+Use `make` to invoke makefile and compile the project along with drivers for testing.
+
 Testing
 =======
 There are three test files:
