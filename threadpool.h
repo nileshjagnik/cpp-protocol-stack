@@ -1,6 +1,7 @@
-#include <vector>
-#include <pthread.h>
-#include <semaphore.h>
+#include<vector>
+#include<pthread.h>
+#include<semaphore.h>
+#include<cstdlib>
 
 using namespace std;
 
