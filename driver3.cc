@@ -73,9 +73,9 @@ main ( )
 
     char* buf1 = new char[140];
     m1->msgFlat(buf1);
-    buf[m1->msgLen ( )] = '\n';
+    buf1[m1->msgLen ( )] = '\n';
     cout << "Message: " << buf1 << endl;
-
+    
     m1->msgJoin(m2);
     char* bufz = new char[400];
     m1->msgFlat(bufz);
