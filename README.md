@@ -16,3 +16,10 @@ There are three test files:
 [driver2.cc](driver2.cc) tests Event Scheduler library.
 
 [driver3.cc](driver3.cc) tests message library.
+
+These can be run using
+`./d1`
+
+`./d2`
+
+`./d3`
