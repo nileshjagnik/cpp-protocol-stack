@@ -24,14 +24,16 @@ void* wrapper_function(void* arg) {
 struct slave_args {
     bool *flag;
     pthread_t *p;
+    sem_t *sem;
 };
 
 
 void* slave_function(void* arg) {
     slave_args *sa = (struct slave_args*) arg;
-    //cout<<"\n Waiting to join with "<<*(sa->p)<<endl;
     (void) pthread_join(*(sa->p), NULL);
+    sem_wait(sa->sem);
     *(sa->flag) = true;
+    sem_post(sa->sem);
 }
            
 class ThreadPool
@@ -86,31 +88,31 @@ int ThreadPool::dispatch_thread(void dispatch_function(void*), void *arg){
             sem_wait(semaphores[i]);
             *status_flags[i] = false;
             sem_post(semaphores[i]);
-        
+            /*
             wrap_args *wa = new wrap_args();
             wa->flag = status_flags[i];
             wa->start = dispatch_function;
             wa->argument = arg;
             wa->sem = semaphores[i];
             int perror = pthread_create(pool[i], NULL, wrapper_function, (void *) wa);
-            //int perror = pthread_create(pool[i], NULL, (void* (*) (void*)) dispatch_function, arg);
+            */
+            int perror = pthread_create(pool[i], NULL, (void* (*) (void*)) dispatch_function, arg);
             if (perror != 0) {
                 cout<<"Pthread creation failed with error:"<<perror<<endl;
                 sem_wait(semaphores[i]);
                 *status_flags[i] = true;
                 sem_post(semaphores[i]);
             }
-            /*
-            *status_flags[i] = false;
+            
             slave_args *sa = new slave_args();
             sa->flag = status_flags[i];
             sa-> p = pool[i];
-            
+            sa-> sem = semaphores[i];
             
             perror = pthread_create((pthread_t *) malloc(sizeof(pthread_t)), NULL, slave_function, (void*) sa);
             if (perror != 0) {
                 cout<<"Slave pthread creation failed with error:"<<perror<<endl;
-            }*/
+            }
             break;
         }
     }
