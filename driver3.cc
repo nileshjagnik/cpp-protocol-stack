@@ -32,7 +32,7 @@ main ( )
     m->msgFlat(buf);
     buf[m->msgLen ( )] = '\n';
     cout << "Message: " << buf << endl;
-
+    
     Message m2;
 
     m->msgSplit(m2, 50);
@@ -41,7 +41,6 @@ main ( )
     m->msgFlat(bufx);
     bufx[m->msgLen ( )] = '\n';
     cout << "Message: " << bufx << endl;
-
 
     cout << "Message length of m2 = " << m2.msgLen( ) << endl;
     char* bufy = new char[140];
@@ -88,7 +87,7 @@ main ( )
     m->msgFlat(bufa);
     bufa[m->msgLen ( )] = '\n';
     cout << "Message: " << bufa << endl;
-
+    //*/
 }
 
 
