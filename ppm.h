@@ -143,6 +143,10 @@ void ftp_deliver(Message *msg) {
         gettimeofday(&end,NULL);
         useconds = end.tv_usec - start.tv_usec;
 	    seconds = end.tv_sec - start.tv_sec;
+	    if(useconds<0) {
+	        seconds--;
+	        useconds = 1000000 - useconds;
+	    }
 	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
     }
 }
@@ -158,6 +162,10 @@ void telnet_deliver(Message *msg) {
         gettimeofday(&end,NULL);
         useconds = end.tv_usec - start.tv_usec;
 	    seconds = end.tv_sec - start.tv_sec;
+	    if(useconds<0) {
+	        seconds--;
+	        useconds = 1000000 - useconds;
+	    }
 	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
     }
 }
@@ -184,6 +192,10 @@ void rdp_deliver(Message *msg) {
         gettimeofday(&end,NULL);
         useconds = end.tv_usec - start.tv_usec;
 	    seconds = end.tv_sec - start.tv_sec;
+	    if(useconds<0) {
+	        seconds--;
+	        useconds = 1000000 - useconds;
+	    }
 	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
     }
 }
@@ -199,6 +211,10 @@ void dns_deliver(Message *msg) {
         gettimeofday(&end,NULL);
         useconds = end.tv_usec - start.tv_usec;
 	    seconds = end.tv_sec - start.tv_sec;
+	    if(useconds<0) {
+	        seconds--;
+	        useconds = 1000000 - useconds;
+	    }
 	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
     }
 }
