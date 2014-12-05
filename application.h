@@ -325,13 +325,16 @@ void ppm_poll_ftp(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         p->send(m,FTP_ID);
         struct timeval time;
         time.tv_sec = 0;
@@ -346,13 +349,16 @@ void ppm_poll_telnet(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         p->send(m,TELNET_ID);
         struct timeval time;
         time.tv_sec = 0;
@@ -367,13 +373,16 @@ void ppm_poll_rdp(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         p->send(m,RDP_ID);
         struct timeval time;
         time.tv_sec = 0;
@@ -388,13 +397,16 @@ void ppm_poll_dns(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         p->send(m,DNS_ID);
         struct timeval time;
         time.tv_sec = 0;
@@ -409,15 +421,16 @@ void ppm_poll_dns(void *arg) {
 void ppp_poll_ftp(void *arg) {
     ppp_info p = *((ppp_info *)arg) ;
     for(int i=0;i<TOT_SEND;i++) {
-        //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
-        
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         sem_wait(p.s.ftpsem);
         write(p.p.ftp[1],&m,sizeof(Message *));
         sem_post(p.s.ftpsem);
@@ -435,15 +448,16 @@ void ppp_poll_ftp(void *arg) {
 void ppp_poll_telnet(void *arg) {
     ppp_info p = *((ppp_info *)arg) ;
     for(int i=0;i<TOT_SEND;i++) {
-        //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
-        
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         sem_wait(p.s.telnetsem);
         write(p.p.telnet[1],&m,sizeof(Message *));
         sem_post(p.s.telnetsem);
@@ -461,15 +475,16 @@ void ppp_poll_telnet(void *arg) {
 void ppp_poll_rdp(void *arg) {
     ppp_info p = *((ppp_info *)arg) ;
     for(int i=0;i<TOT_SEND;i++) {
-        //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
-        
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         sem_wait(p.s.rdpsem);
         write(p.p.rdp[1],&m,sizeof(Message *));
         sem_post(p.s.rdpsem);
@@ -487,15 +502,16 @@ void ppp_poll_rdp(void *arg) {
 void ppp_poll_dns(void *arg) {
     ppp_info p = *((ppp_info *)arg) ;
     for(int i=0;i<TOT_SEND;i++) {
-        //printf("sending Message %d\n",i);
-        char msg [3];
+        char msg [100];
         int one = i/10;
         int two = i - one*10;
-        msg[0]='0'+one;
-        msg[1]='0'+two;
-        msg[2] ='\0';
-        Message *m = new Message(msg,2);
-        
+        for(int j=0;j<97;j++) {
+            msg[i] = '0';
+        }
+        msg[97]='0'+one;
+        msg[98]='0'+two;
+        msg[99] ='\0';
+        Message *m = new Message(msg,100);
         sem_wait(p.s.dnssem);
         write(p.p.dns[1],&m,sizeof(Message *));
         sem_post(p.s.dnssem);
