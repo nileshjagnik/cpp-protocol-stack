@@ -6,4 +6,5 @@
 #define RDP_ID 7
 #define TELNET_ID 6
 #define UDP_ID 4
-#define TOT_SEND 30
+#define TOT_SEND 100
+#define TIME_OUT 800

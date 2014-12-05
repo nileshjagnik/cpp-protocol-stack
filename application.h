@@ -314,7 +314,7 @@ application::application(bool first, int total, char* hostname, char* other_port
     }
     struct timeval time;
     time.tv_sec = 2;
-    time.tv_usec = 1000;
+    time.tv_usec = TIME_OUT;
     int error;
     if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
         cout<<"Error in select, returned :"<<error<<endl;
@@ -335,7 +335,7 @@ void ppm_poll_ftp(void *arg) {
         p->send(m,FTP_ID);
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -356,7 +356,7 @@ void ppm_poll_telnet(void *arg) {
         p->send(m,TELNET_ID);
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -377,7 +377,7 @@ void ppm_poll_rdp(void *arg) {
         p->send(m,RDP_ID);
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -398,7 +398,7 @@ void ppm_poll_dns(void *arg) {
         p->send(m,DNS_ID);
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -424,7 +424,7 @@ void ppp_poll_ftp(void *arg) {
         
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -450,7 +450,7 @@ void ppp_poll_telnet(void *arg) {
         
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -476,7 +476,7 @@ void ppp_poll_rdp(void *arg) {
         
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
@@ -502,7 +502,7 @@ void ppp_poll_dns(void *arg) {
         
         struct timeval time;
         time.tv_sec = 0;
-        time.tv_usec = 1000;
+        time.tv_usec = TIME_OUT;
         int error;
         if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
             cout<<"Error in select, returned :"<<error<<endl;
