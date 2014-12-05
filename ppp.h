@@ -15,7 +15,7 @@ void udp_deliver_ppp(void*);
 void rdp_deliver_ppp(void*);
 void dns_deliver_ppp(void*);
 
-/*
+
 int FTP_count2=0;
 int Telnet_count2=0;
 int RDP_count2=0;
@@ -23,7 +23,6 @@ int DNS_count2=0;
 
 struct timeval start2, end2;
 long mtime2, seconds2, useconds2;
-*/
 
 class ppp {
     public:
@@ -34,7 +33,7 @@ class ppp {
 };
 
 ppp::ppp(ppp_info *f) {
-    gettimeofday(&start,NULL);
+    gettimeofday(&start2,NULL);
     pool = new ThreadPool(16);
     if(pool->thread_avail()) {
         pool->dispatch_thread(ftp_send_ppp, (void*)f);
@@ -444,16 +443,16 @@ void dns_deliver_ppp(void *arg) {
         m->msgFlat(buf);
         printf("TELNET got:%s\n",buf);
         */
-        DNS_count++;
-        if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
-            gettimeofday(&end,NULL);
-            useconds = end.tv_usec - start.tv_usec;
-	        seconds = end.tv_sec - start.tv_sec;
-	        if(useconds<0) {
-	            seconds--;
-	            useconds = 1000000 - useconds;
+        DNS_count2++;
+        if((FTP_count2==TOT_SEND) && (Telnet_count2==TOT_SEND)&&(RDP_count2==TOT_SEND) &&(DNS_count2==TOT_SEND)) {
+            gettimeofday(&end2,NULL);
+            useconds2 = end2.tv_usec - start2.tv_usec;
+	        seconds2 = end2.tv_sec - start2.tv_sec;
+	        if(useconds2<0) {
+	            seconds2--;
+	            useconds2 = 1000000 - useconds2;
 	        }
-	        cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+	        cout << "elapsed time: "<< seconds2 << " seconds " << useconds2 << " microseconds\n" << endl;
         }
      }
 }
@@ -479,16 +478,16 @@ void rdp_deliver_ppp(void *arg) {
         m->msgFlat(buf);
         printf("RDP got:%s\n",buf);
         */
-        RDP_count++;
-        if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
-            gettimeofday(&end,NULL);
-            useconds = end.tv_usec - start.tv_usec;
-	        seconds = end.tv_sec - start.tv_sec;
-	        if(useconds<0) {
-	            seconds--;
-	            useconds = 1000000 - useconds;
+        RDP_count2++;
+        if((FTP_count2==TOT_SEND) && (Telnet_count2==TOT_SEND)&&(RDP_count2==TOT_SEND) &&(DNS_count2==TOT_SEND)) {
+            gettimeofday(&end2,NULL);
+            useconds2 = end2.tv_usec - start2.tv_usec;
+	        seconds2 = end2.tv_sec - start2.tv_sec;
+	        if(useconds2<0) {
+	            seconds2--;
+	            useconds2 = 1000000 - useconds2;
 	        }
-	        cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+	        cout << "elapsed time: "<< seconds2 << " seconds " << useconds2 << " microseconds\n" << endl;
         }
      }
 }
@@ -544,16 +543,16 @@ void ftp_deliver_ppp(void *arg) {
         m->msgFlat(buf);
         printf("FTP got:%s\n",buf);
         */
-        FTP_count++;
-        if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
-            gettimeofday(&end,NULL);
-            useconds = end.tv_usec - start.tv_usec;
-	        seconds = end.tv_sec - start.tv_sec;
-	        if(useconds<0) {
-	            seconds--;
-	            useconds = 1000000 - useconds;
+        FTP_count2++;
+        if((FTP_count2==TOT_SEND) && (Telnet_count2==TOT_SEND)&&(RDP_count2==TOT_SEND) &&(DNS_count2==TOT_SEND)) {
+            gettimeofday(&end2,NULL);
+            useconds2 = end2.tv_usec - start2.tv_usec;
+	        seconds2 = end2.tv_sec - start2.tv_sec;
+	        if(useconds2<0) {
+	            seconds2--;
+	            useconds2 = 1000000 - useconds2;
 	        }
-	        cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+	        cout << "elapsed time: "<< seconds2 << " seconds " << useconds2 << " microseconds\n" << endl;
         }
      }
 }
@@ -579,16 +578,16 @@ void telnet_deliver_ppp(void *arg) {
         m->msgFlat(buf);
         printf("TELNET got:%s\n",buf);
         */
-        Telnet_count++;
-        if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
-            gettimeofday(&end,NULL);
-            useconds = end.tv_usec - start.tv_usec;
-	        seconds = end.tv_sec - start.tv_sec;
-	        if(useconds<0) {
-	            seconds--;
-	            useconds = 1000000 - useconds;
+        Telnet_count2++;
+        if((FTP_count2==TOT_SEND) && (Telnet_count2==TOT_SEND)&&(RDP_count2==TOT_SEND) &&(DNS_count2==TOT_SEND)) {
+            gettimeofday(&end2,NULL);
+            useconds2 = end2.tv_usec - start2.tv_usec;
+	        seconds2 = end2.tv_sec - start2.tv_sec;
+	        if(useconds2<0) {
+	            seconds2--;
+	            useconds2 = 1000000 - useconds2;
 	        }
-	        cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+	        cout << "elapsed time: "<< seconds2 << " seconds " << useconds2 << " microseconds\n" << endl;
         }
      }
 }
