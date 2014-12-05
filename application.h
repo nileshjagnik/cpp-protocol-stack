@@ -14,6 +14,8 @@
 
 #define BUF_SIZE 2048
 #include "ppm.h"
+#include "ppp.h"
+
 using namespace std;
 
 extern int	errno;
@@ -22,7 +24,10 @@ void ppp_poll_ftp(void *arg);
 void ppp_poll_telnet(void *arg);
 void ppp_poll_rdp(void *arg);
 void ppp_poll_dns(void *arg);
-
+void ppm_poll_ftp(void *arg);
+void ppm_poll_telnet(void *arg);
+void ppm_poll_rdp(void *arg);
+void ppm_poll_dns(void *arg);
 
 class application{
     public:
@@ -36,6 +41,7 @@ class application{
     int send_sock;
     int recv_sock;
     ppm *p;
+    ppp *pp;
 };
 
 application::~application() {
@@ -207,28 +213,115 @@ application::application(bool first, int total, char* hostname, char* other_port
         p = new ppm(send_sock,recv_sock, 50,total,server,other);
         ThreadPool thp(4);
         if (thp.thread_avail()) {
-            thp.dispatch_thread(ppp_poll_ftp,(void *)p);
+            thp.dispatch_thread(ppm_poll_ftp,(void *)p);
         }
         if (thp.thread_avail()) {
-            thp.dispatch_thread(ppp_poll_telnet,(void *)p);
+            thp.dispatch_thread(ppm_poll_telnet,(void *)p);
         }
         if (thp.thread_avail()) {
-            thp.dispatch_thread(ppp_poll_rdp,(void *)p);
+            thp.dispatch_thread(ppm_poll_rdp,(void *)p);
         }
         if (thp.thread_avail()) {
-            thp.dispatch_thread(ppp_poll_dns,(void *)p);
+            thp.dispatch_thread(ppm_poll_dns,(void *)p);
         }
-        struct timeval time;
-        time.tv_sec = 2;
-        time.tv_usec = 1000;
-        int error;
-        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
-            cout<<"Error in select, returned :"<<error<<endl;
+    }
+    else {
+        ppp_info p;
+        p.sendsock = send_sock;
+        p.recvsock = recv_sock;
+        p.server = server;
+        p.other = other;
+        p.s.ftpsem = new sem_t();
+        sem_init(p.s.ftpsem, 0, 1);
+        p.s.ftp_upsem = new sem_t();
+        sem_init(p.s.ftp_upsem, 0, 1);
+        p.s.rdpsem = new sem_t();
+        sem_init(p.s.rdpsem, 0, 1);
+        p.s.rdp_upsem = new sem_t();
+        sem_init(p.s.rdp_upsem, 0, 1);
+        p.s.dnssem = new sem_t();
+        sem_init(p.s.dnssem, 0, 1);
+        p.s.dns_upsem = new sem_t();
+        sem_init(p.s.dns_upsem, 0, 1);
+        p.s.telnetsem = new sem_t();
+        sem_init(p.s.telnetsem, 0, 1);
+        p.s.telnet_upsem = new sem_t();
+        sem_init(p.s.telnet_upsem, 0, 1);
+        p.s.tcpsem = new sem_t();
+        sem_init(p.s.tcpsem, 0, 1);
+        p.s.tcp_upsem = new sem_t();
+        sem_init(p.s.tcp_upsem, 0, 1);
+        p.s.tcp2sem = new sem_t();
+        sem_init(p.s.tcp2sem, 0, 1);
+        p.s.tcp2_upsem = new sem_t();
+        sem_init(p.s.tcp2_upsem, 0, 1);
+        p.s.udpsem = new sem_t();
+        sem_init(p.s.udpsem, 0, 1);
+        p.s.udp_upsem = new sem_t();
+        sem_init(p.s.udp_upsem, 0, 1);
+        p.s.udp2sem = new sem_t();
+        sem_init(p.s.udp2sem, 0, 1);
+        p.s.udp2_upsem = new sem_t();
+        sem_init(p.s.udp2_upsem, 0, 1);
+        p.s.ipsem = new sem_t();
+        sem_init(p.s.ipsem, 0, 1);
+        p.s.ip_upsem = new sem_t();
+        sem_init(p.s.ip_upsem, 0, 1);
+        p.s.ip2sem = new sem_t();
+        sem_init(p.s.ip2sem, 0, 1);
+        p.s.ip2_upsem = new sem_t();
+        sem_init(p.s.ip2_upsem, 0, 1);
+        p.s.ethsem = new sem_t();
+        sem_init(p.s.ethsem, 0, 1);
+        p.s.eth_upsem = new sem_t();
+        sem_init(p.s.eth_upsem, 0, 1);
+        pipe(p.p.ftp);
+        pipe(p.p.ftp_up);
+        pipe(p.p.telnet);
+        pipe(p.p.telnet_up);
+        pipe(p.p.rdp);
+        pipe(p.p.rdp_up);
+        pipe(p.p.dns);
+        pipe(p.p.dns_up);
+        pipe(p.p.tcp);
+        pipe(p.p.tcp_up);
+        pipe(p.p.tcp2);
+        pipe(p.p.tcp2_up);
+        pipe(p.p.udp);
+        pipe(p.p.udp_up);
+        pipe(p.p.udp2);
+        pipe(p.p.udp2_up);
+        pipe(p.p.ip);
+        pipe(p.p.ip_up);
+        pipe(p.p.ip2);
+        pipe(p.p.ip2_up);
+        pipe(p.p.eth);
+        pipe(p.p.eth_up);
+        pp = new ppp(&p);
+        ThreadPool thp(4);
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_ftp,(void *)&p);
         }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_telnet,(void *)&p);
+        }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_rdp,(void *)&p);
+        }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_dns,(void *)&p);
+        }
+    }
+    struct timeval time;
+    time.tv_sec = 2;
+    time.tv_usec = 1000;
+    int error;
+    if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+        cout<<"Error in select, returned :"<<error<<endl;
     }
 }
 
-void ppp_poll_ftp(void *arg) {
+void ppm_poll_ftp(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
@@ -249,7 +342,7 @@ void ppp_poll_ftp(void *arg) {
         }
     }
 }
-void ppp_poll_telnet(void *arg) {
+void ppm_poll_telnet(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
@@ -270,7 +363,7 @@ void ppp_poll_telnet(void *arg) {
         }
     }
 }
-void ppp_poll_rdp(void *arg) {
+void ppm_poll_rdp(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
@@ -291,7 +384,7 @@ void ppp_poll_rdp(void *arg) {
         }
     }
 }
-void ppp_poll_dns(void *arg) {
+void ppm_poll_dns(void *arg) {
     ppm *p = (ppm *) arg; 
     for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
@@ -303,6 +396,110 @@ void ppp_poll_dns(void *arg) {
         msg[2] ='\0';
         Message *m = new Message(msg,2);
         p->send(m,DNS_ID);
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+
+void ppp_poll_ftp(void *arg) {
+    ppp_info p = *((ppp_info *)arg) ;
+    for(int i=0;i<TOT_SEND;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        
+        sem_wait(p.s.ftpsem);
+        write(p.p.ftp[1],&m,sizeof(Message *));
+        sem_post(p.s.ftpsem);
+        
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+
+void ppp_poll_telnet(void *arg) {
+    ppp_info p = *((ppp_info *)arg) ;
+    for(int i=0;i<TOT_SEND;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        
+        sem_wait(p.s.telnetsem);
+        write(p.p.telnet[1],&m,sizeof(Message *));
+        sem_post(p.s.telnetsem);
+        
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+
+void ppp_poll_rdp(void *arg) {
+    ppp_info p = *((ppp_info *)arg) ;
+    for(int i=0;i<TOT_SEND;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        
+        sem_wait(p.s.rdpsem);
+        write(p.p.rdp[1],&m,sizeof(Message *));
+        sem_post(p.s.rdpsem);
+        
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+
+void ppp_poll_dns(void *arg) {
+    ppp_info p = *((ppp_info *)arg) ;
+    for(int i=0;i<TOT_SEND;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        
+        sem_wait(p.s.dnssem);
+        write(p.p.dns[1],&m,sizeof(Message *));
+        sem_post(p.s.dnssem);
+        
         struct timeval time;
         time.tv_sec = 0;
         time.tv_usec = 1000;

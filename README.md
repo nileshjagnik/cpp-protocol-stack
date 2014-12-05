@@ -1,7 +1,7 @@
 cpp-protocol-stack
 ==================
 
-Implement a network protocol stack using process per message model. To get a clear idea about the project read [pa3.pdf](pa3.pdf)
+Implement a network protocol stack using process per message model. To get a clear idea about the project read [pa3.pdf](pa3.pdf) and [pa4.pdf](pa4.pdf)
 
 Compiling Instructions
 =====================
