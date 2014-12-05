@@ -39,6 +39,9 @@ int Telnet_count=0;
 int RDP_count=0;
 int DNS_count=0;
 
+struct timeval start, end;
+long mtime, seconds, useconds;
+	
 class ppm {
     public:
     ppm(int send, int recv, size_t poolsize, int message_count,sockaddr_in server,sockaddr_in other);
@@ -52,6 +55,7 @@ class ppm {
 };
 
 ppm::ppm(int send, int recv, size_t poolsize, int message_count,sockaddr_in svr,sockaddr_in oth) {
+    gettimeofday(&start,NULL);
     send_sock = send;
     recv_sock = recv;
     server = svr;
@@ -130,20 +134,32 @@ void ppm::send(Message *msg, int proto_id) {
 }
 void ftp_deliver(Message *msg) {
     ftp_hdr *hdr = (ftp_hdr*) msg->msgStripHdr(16); 
-    char buf [msg->msgLen()+1];
+    /*char buf [msg->msgLen()+1];
     msg->msgFlat(buf);
-    buf [msg->msgLen()] = '\0';
+    buf [msg->msgLen()] = '\0';*/
     FTP_count++;
-    printf("FTP Received: %s\n",buf);
+    //printf("FTP Received: %s\n",buf);
+    if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
+        gettimeofday(&end,NULL);
+        useconds = end.tv_usec - start.tv_usec;
+	    seconds = end.tv_sec - start.tv_sec;
+	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+    }
 }
 
 void telnet_deliver(Message *msg) {
     telnet_hdr *hdr = (telnet_hdr*) msg->msgStripHdr(16); 
-    char buf [msg->msgLen()+1];
+    /*char buf [msg->msgLen()+1];
     msg->msgFlat(buf);
-    buf [msg->msgLen()] = '\0';
+    buf [msg->msgLen()] = '\0';*/
     Telnet_count++;
-    printf("TELNET Received: %s\n",buf);
+    //printf("TELNET Received: %s\n",buf);
+    if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
+        gettimeofday(&end,NULL);
+        useconds = end.tv_usec - start.tv_usec;
+	    seconds = end.tv_sec - start.tv_sec;
+	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+    }
 }
 
 void tcp_deliver(Message *msg) {
@@ -159,20 +175,32 @@ void tcp_deliver(Message *msg) {
 
 void rdp_deliver(Message *msg) {
     rdp_hdr *hdr = (rdp_hdr*) msg->msgStripHdr(20); 
-    char buf [msg->msgLen()+1];
+    /*char buf [msg->msgLen()+1];
     msg->msgFlat(buf);
-    buf [msg->msgLen()] = '\0';
+    buf [msg->msgLen()] = '\0';*/
     RDP_count++;
-    printf("RDP Received: %s\n",buf);
+    //printf("RDP Received: %s\n",buf);
+    if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
+        gettimeofday(&end,NULL);
+        useconds = end.tv_usec - start.tv_usec;
+	    seconds = end.tv_sec - start.tv_sec;
+	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+    }
 }
 
 void dns_deliver(Message *msg) {
     dns_hdr *hdr = (dns_hdr*) msg->msgStripHdr(16); 
-    char buf [msg->msgLen()+1];
+    /*char buf [msg->msgLen()+1];
     msg->msgFlat(buf);
-    buf [msg->msgLen()] = '\0';
+    buf [msg->msgLen()] = '\0';*/
     DNS_count++;
-    printf("DNS     Received: %s\n",buf);
+    //printf("DNS     Received: %s\n",buf);
+    if((FTP_count==TOT_SEND) && (Telnet_count==TOT_SEND)&&(RDP_count==TOT_SEND) &&(DNS_count==TOT_SEND)) {
+        gettimeofday(&end,NULL);
+        useconds = end.tv_usec - start.tv_usec;
+	    seconds = end.tv_sec - start.tv_sec;
+	    cout << "elapsed time: "<< seconds << " seconds " << useconds << " microseconds\n" << endl;
+    }
 }
 
 void udp_deliver(Message *msg) {

@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -217,67 +218,6 @@ application::application(bool first, int total, char* hostname, char* other_port
         if (thp.thread_avail()) {
             thp.dispatch_thread(ppp_poll_dns,(void *)p);
         }
-        /*
-        for(int i=0;i<10;i++) {
-            //printf("sending Message %d\n",i);
-            char msg [2];
-            msg[0] = '0'+i;
-            msg[1] = '\0';
-            Message *m = new Message(msg,1);
-            p->send(m,FTP_ID);
-            struct timeval time;
-            time.tv_sec = 0;
-            time.tv_usec = 1000;
-            int error;
-            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
-                cout<<"Error in select, returned :"<<error<<endl;
-            }
-        }
-        for(int i=0;i<10;i++) {
-            //printf("sending Message %d\n",i);
-            char msg [2];
-            msg[0] = '0'+i;
-            msg[1] = '\0';
-            Message *m = new Message(msg,1);
-            p->send(m,TELNET_ID);
-            struct timeval time;
-            time.tv_sec = 0;
-            time.tv_usec = 1000;
-            int error;
-            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
-                cout<<"Error in select, returned :"<<error<<endl;
-            }
-        }
-        for(int i=0;i<10;i++) {
-            //printf("sending Message %d\n",i);
-            char msg [2];
-            msg[0] = '0'+i;
-            msg[1] = '\0';
-            Message *m = new Message(msg,1);
-            p->send(m,RDP_ID);
-            struct timeval time;
-            time.tv_sec = 0;
-            time.tv_usec = 1000;
-            int error;
-            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
-                cout<<"Error in select, returned :"<<error<<endl;
-            }
-        }
-        for(int i=0;i<10;i++) {
-            //printf("sending Message %d\n",i);
-            char msg [2];
-            msg[0] = '0'+i;
-            msg[1] = '\0';
-            Message *m = new Message(msg,1);
-            p->send(m,DNS_ID);
-            struct timeval time;
-            time.tv_sec = 0;
-            time.tv_usec = 1000;
-            int error;
-            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
-                cout<<"Error in select, returned :"<<error<<endl;
-            }
-        }*/
         struct timeval time;
         time.tv_sec = 2;
         time.tv_usec = 1000;
@@ -290,7 +230,7 @@ application::application(bool first, int total, char* hostname, char* other_port
 
 void ppp_poll_ftp(void *arg) {
     ppm *p = (ppm *) arg; 
-    for(int i=0;i<100;i++) {
+    for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
         char msg [3];
         int one = i/10;
@@ -311,7 +251,7 @@ void ppp_poll_ftp(void *arg) {
 }
 void ppp_poll_telnet(void *arg) {
     ppm *p = (ppm *) arg; 
-    for(int i=0;i<100;i++) {
+    for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
         char msg [3];
         int one = i/10;
@@ -332,7 +272,7 @@ void ppp_poll_telnet(void *arg) {
 }
 void ppp_poll_rdp(void *arg) {
     ppm *p = (ppm *) arg; 
-    for(int i=0;i<100;i++) {
+    for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
         char msg [3];
         int one = i/10;
@@ -353,7 +293,7 @@ void ppp_poll_rdp(void *arg) {
 }
 void ppp_poll_dns(void *arg) {
     ppm *p = (ppm *) arg; 
-    for(int i=0;i<100;i++) {
+    for(int i=0;i<TOT_SEND;i++) {
         //printf("sending Message %d\n",i);
         char msg [3];
         int one = i/10;
