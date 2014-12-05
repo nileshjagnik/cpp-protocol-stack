@@ -17,6 +17,11 @@ using namespace std;
 
 extern int	errno;
 int		errexit(const char *format, ...);
+void ppp_poll_ftp(void *arg);
+void ppp_poll_telnet(void *arg);
+void ppp_poll_rdp(void *arg);
+void ppp_poll_dns(void *arg);
+
 
 class application{
     public:
@@ -199,13 +204,27 @@ application::application(bool first, int total, char* hostname, char* other_port
     }
     if (flag == true) {
         p = new ppm(send_sock,recv_sock, 50,total,server,other);
+        ThreadPool thp(4);
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_ftp,(void *)p);
+        }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_telnet,(void *)p);
+        }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_rdp,(void *)p);
+        }
+        if (thp.thread_avail()) {
+            thp.dispatch_thread(ppp_poll_dns,(void *)p);
+        }
+        /*
         for(int i=0;i<10;i++) {
             //printf("sending Message %d\n",i);
             char msg [2];
             msg[0] = '0'+i;
             msg[1] = '\0';
             Message *m = new Message(msg,1);
-            p->send(m,3);
+            p->send(m,FTP_ID);
             struct timeval time;
             time.tv_sec = 0;
             time.tv_usec = 1000;
@@ -214,6 +233,73 @@ application::application(bool first, int total, char* hostname, char* other_port
                 cout<<"Error in select, returned :"<<error<<endl;
             }
         }
+        for(int i=0;i<10;i++) {
+            //printf("sending Message %d\n",i);
+            char msg [2];
+            msg[0] = '0'+i;
+            msg[1] = '\0';
+            Message *m = new Message(msg,1);
+            p->send(m,TELNET_ID);
+            struct timeval time;
+            time.tv_sec = 0;
+            time.tv_usec = 1000;
+            int error;
+            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+                cout<<"Error in select, returned :"<<error<<endl;
+            }
+        }
+        for(int i=0;i<10;i++) {
+            //printf("sending Message %d\n",i);
+            char msg [2];
+            msg[0] = '0'+i;
+            msg[1] = '\0';
+            Message *m = new Message(msg,1);
+            p->send(m,RDP_ID);
+            struct timeval time;
+            time.tv_sec = 0;
+            time.tv_usec = 1000;
+            int error;
+            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+                cout<<"Error in select, returned :"<<error<<endl;
+            }
+        }
+        for(int i=0;i<10;i++) {
+            //printf("sending Message %d\n",i);
+            char msg [2];
+            msg[0] = '0'+i;
+            msg[1] = '\0';
+            Message *m = new Message(msg,1);
+            p->send(m,DNS_ID);
+            struct timeval time;
+            time.tv_sec = 0;
+            time.tv_usec = 1000;
+            int error;
+            if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+                cout<<"Error in select, returned :"<<error<<endl;
+            }
+        }*/
+        struct timeval time;
+        time.tv_sec = 2;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+
+void ppp_poll_ftp(void *arg) {
+    ppm *p = (ppm *) arg; 
+    for(int i=0;i<100;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        p->send(m,FTP_ID);
         struct timeval time;
         time.tv_sec = 0;
         time.tv_usec = 1000;
@@ -222,6 +308,67 @@ application::application(bool first, int total, char* hostname, char* other_port
             cout<<"Error in select, returned :"<<error<<endl;
         }
     }
-    
-    
+}
+void ppp_poll_telnet(void *arg) {
+    ppm *p = (ppm *) arg; 
+    for(int i=0;i<100;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        p->send(m,TELNET_ID);
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+void ppp_poll_rdp(void *arg) {
+    ppm *p = (ppm *) arg; 
+    for(int i=0;i<100;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        p->send(m,RDP_ID);
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
+}
+void ppp_poll_dns(void *arg) {
+    ppm *p = (ppm *) arg; 
+    for(int i=0;i<100;i++) {
+        //printf("sending Message %d\n",i);
+        char msg [3];
+        int one = i/10;
+        int two = i - one*10;
+        msg[0]='0'+one;
+        msg[1]='0'+two;
+        msg[2] ='\0';
+        Message *m = new Message(msg,2);
+        p->send(m,DNS_ID);
+        struct timeval time;
+        time.tv_sec = 0;
+        time.tv_usec = 1000;
+        int error;
+        if ((error = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &time)) != 0) {
+            cout<<"Error in select, returned :"<<error<<endl;
+        }
+    }
 }

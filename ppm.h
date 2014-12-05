@@ -18,10 +18,26 @@
 
 using namespace std;
 
-void ftp_deliver(void *arg);
 void ftp_send(void* ftp_inp);
-void eth_send(int hlp, Message *msg, info f);
+void dns_send(void* dns_inp);
+void rdp_send(void* rdp_inp);
+void telnet_send(void* telnet_inp);
+void tcp_send(send_input* sen);
+void udp_send(send_input* sen);
+void ip_send(send_input* sen);
+void eth_send(send_input* sen);
 void eth_deliver(void*);
+void tcp_deliver(Message*);
+void ftp_deliver(Message*);
+void telnet_deliver(Message*);
+void udp_deliver(Message*);
+void rdp_deliver(Message*);
+void dns_deliver(Message*);
+
+int FTP_count=0;
+int Telnet_count=0;
+int RDP_count=0;
+int DNS_count=0;
 
 class ppm {
     public:
@@ -58,7 +74,7 @@ ppm::ppm(int send, int recv, size_t poolsize, int message_count,sockaddr_in svr,
 }
 void ppm::send(Message *msg, int proto_id) {
     send_input *sen= new send_input();
-    sen->protocol_id = TCP_ID;
+    sen->protocol_id = proto_id;
     sen->msg = msg;
     info inf;
     inf.ssocket = send_sock;
@@ -70,22 +86,117 @@ void ppm::send(Message *msg, int proto_id) {
     inf.pool=pool;
     sen->f = inf;
     //printf("Making thread for message\n");
-    if(pool->thread_avail()) {
-        /*
-        char buf [sen->msg->msgLen()];
-        sen->msg->msgFlat(buf);
-        printf("App Sending-%s\n",buf);
-        */
-        pool->dispatch_thread(ftp_send,(void *)sen);
+    if(proto_id == FTP_ID) {
+        if(pool->thread_avail()) {
+            /*
+            char buf [sen->msg->msgLen()];
+            sen->msg->msgFlat(buf);
+            printf("App Sending-%s\n",buf);
+            */
+            pool->dispatch_thread(ftp_send,(void *)sen);
+        }
     }
+    else if(proto_id == TELNET_ID) {
+        if(pool->thread_avail()) {
+            /*
+            char buf [sen->msg->msgLen()];
+            sen->msg->msgFlat(buf);
+            printf("App Sending-%s\n",buf);
+            */
+            pool->dispatch_thread(telnet_send,(void *)sen);
+        }
+    }
+    else if(proto_id == RDP_ID) {
+        if(pool->thread_avail()) {
+            /*
+            char buf [sen->msg->msgLen()];
+            sen->msg->msgFlat(buf);
+            printf("App Sending-%s\n",buf);
+            */
+            pool->dispatch_thread(rdp_send,(void *)sen);
+        }
+    }
+    else if(proto_id == DNS_ID) {
+        if(pool->thread_avail()) {
+            /*
+            char buf [sen->msg->msgLen()];
+            sen->msg->msgFlat(buf);
+            printf("App Sending-%s\n",buf);
+            */
+            pool->dispatch_thread(dns_send,(void *)sen);
+        }
+    }
+    
 }
-void ftp_deliver(void *arg) {
-    Message *msg = (Message *) arg; 
+void ftp_deliver(Message *msg) {
+    ftp_hdr *hdr = (ftp_hdr*) msg->msgStripHdr(16); 
     char buf [msg->msgLen()+1];
     msg->msgFlat(buf);
     buf [msg->msgLen()] = '\0';
-    printf("Recieved: %s\n",buf);
+    FTP_count++;
+    printf("FTP Received: %s\n",buf);
 }
+
+void telnet_deliver(Message *msg) {
+    telnet_hdr *hdr = (telnet_hdr*) msg->msgStripHdr(16); 
+    char buf [msg->msgLen()+1];
+    msg->msgFlat(buf);
+    buf [msg->msgLen()] = '\0';
+    Telnet_count++;
+    printf("TELNET Received: %s\n",buf);
+}
+
+void tcp_deliver(Message *msg) {
+    tcp_hdr *hdr = (tcp_hdr*) msg->msgStripHdr(12);
+    //printf("%d\n",hdr->hlp);
+    if(hdr->hlp == FTP_ID) {
+        ftp_deliver(msg);
+    }
+    else if(hdr->hlp == TELNET_ID) {
+        telnet_deliver(msg);
+    }
+}
+
+void rdp_deliver(Message *msg) {
+    rdp_hdr *hdr = (rdp_hdr*) msg->msgStripHdr(20); 
+    char buf [msg->msgLen()+1];
+    msg->msgFlat(buf);
+    buf [msg->msgLen()] = '\0';
+    RDP_count++;
+    printf("RDP Received: %s\n",buf);
+}
+
+void dns_deliver(Message *msg) {
+    dns_hdr *hdr = (dns_hdr*) msg->msgStripHdr(16); 
+    char buf [msg->msgLen()+1];
+    msg->msgFlat(buf);
+    buf [msg->msgLen()] = '\0';
+    DNS_count++;
+    printf("DNS     Received: %s\n",buf);
+}
+
+void udp_deliver(Message *msg) {
+    udp_hdr *hdr = (udp_hdr*) msg->msgStripHdr(12);
+    //printf("%d\n",hdr->hlp);
+    if(hdr->hlp == RDP_ID) {
+        rdp_deliver(msg);
+    }
+    else if(hdr->hlp == DNS_ID) {
+        dns_deliver(msg);
+    }
+}
+
+void ip_deliver(void *arg) {
+    Message *msg = (Message*) arg;
+    ip_hdr *hdr = (ip_hdr*) msg->msgStripHdr(20);
+    if(hdr->hlp == TCP_ID) {
+        tcp_deliver(msg);
+    }
+    else if(hdr->hlp == UDP_ID) {
+        udp_deliver(msg);
+    }
+}
+
 void eth_deliver(void *arg) {
     //printf("Eth ready to deliver\n");
     info *f = (struct info*) arg;
@@ -96,10 +207,12 @@ void eth_deliver(void *arg) {
         buf = new char [BUF_SIZE];
         bzero(buf,BUF_SIZE);
         if ((n = recvfrom(f->rsocket, buf, BUF_SIZE, 0, (struct sockaddr *) &(f->other), &len)) != -1) {
-            //printf("%s\n",buf);
+            //printf("%d\n",n);
             Message *msg = new Message(buf,n);
+            eth_hdr *eth = (eth_hdr*) msg->msgStripHdr(16);
+            //printf("%d\n",eth->hlp);
             if(f->pool->thread_avail()) {
-                f->pool->dispatch_thread(ftp_deliver,(void *)msg);
+                f->pool->dispatch_thread(ip_deliver,(void *)msg);
             }
         }
         else {
@@ -111,36 +224,117 @@ void eth_deliver(void *arg) {
 }
 void ftp_send(void* ftp_inp) {
     send_input *sen = (send_input*) ftp_inp;
-    /*
-    char buf [sen->msg->msgLen()];
+    /*char buf [BUF_SIZE];
     sen->msg->msgFlat(buf);
-    printf("IP Sending-%s\n",buf); */
-    /*
-    ftp_hdr *hdr;
+    //printf("FTP Sending-%s\n",buf);*/
+    ftp_hdr *hdr=new ftp_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,16);
+    sen->protocol_id=FTP_ID;
+    tcp_send(sen);
+}
+
+void telnet_send(void* telnet_inp) {
+    send_input *sen = (send_input*) telnet_inp;
+    /*char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("Telnet Sending-%s\n",buf); */
+    telnet_hdr *hdr=new telnet_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,16);
+    sen->protocol_id=TELNET_ID;
+    tcp_send(sen);
+}
+
+void rdp_send(void* rdp_inp) {
+    send_input *sen = (send_input*) rdp_inp;
+    /*char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("RDP Sending-%s\n",buf);*/ 
+    rdp_hdr *hdr = new rdp_hdr();
     hdr->hlp = sen->protocol_id;
     strcpy(hdr->other_info,"");
     hdr->datalength = sen->msg->msgLen();
     sen->msg->msgAddHdr((char*)hdr,20);
-    */
-    eth_send(FTP_ID, sen->msg,sen->f);
+    sen->protocol_id=RDP_ID;
+    udp_send(sen);
 }
 
-void eth_send(int hlp, Message *msg, info f) {
-    /*eth_hdr *et;
-    et->hlp = hlp;
+void dns_send(void* dns_inp) {
+    send_input *sen = (send_input*) dns_inp;
+    /*char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("DNS Sending-%s\n",buf); */
+    dns_hdr *hdr = new dns_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,16);
+    sen->protocol_id=DNS_ID;
+    udp_send(sen);
+}
+
+void tcp_send(send_input* sen) {
+   /* char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("TCP Sending-%s\n",buf); */
+    tcp_hdr *hdr= new tcp_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,12);
+    
+    sen->protocol_id=TCP_ID;
+    ip_send(sen);
+}
+
+void udp_send(send_input* sen) {
+    
+    /*char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("UDP Sending-%s\n",buf); */
+    udp_hdr *hdr = new udp_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,12);
+    sen->protocol_id=UDP_ID;
+    ip_send(sen);
+}
+
+void ip_send(send_input* sen) {
+    
+    /*char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
+    //printf("IP Sending-%s\n",buf); */
+    ip_hdr *hdr=new ip_hdr();
+    hdr->hlp = sen->protocol_id;
+    strcpy(hdr->other_info,"");
+    hdr->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)hdr,20);
+    sen->protocol_id=IP_ID;
+    eth_send(sen);
+}
+void eth_send(send_input* sen) {
+    eth_hdr *et=new eth_hdr();
+    et->hlp = sen->protocol_id;
     strcpy(et->other_info,"");
-    et->datalength = msg->msgLen();
-    msg->msgAddHdr((char*)hdr,16);*/
-    char buf [msg->msgLen()];
-    msg->msgFlat(buf);
+    et->datalength = sen->msg->msgLen();
+    sen->msg->msgAddHdr((char*)et,16);
+    char buf [sen->msg->msgLen()];
+    sen->msg->msgFlat(buf);
     //printf("Eth Sending-%s\n",buf);
-    sem_wait(f.sendsem);
-    int n = sendto(f.ssocket, buf, msg->msgLen(), 0, (struct sockaddr *) &(f.server), sizeof(struct sockaddr_in));
+    sem_wait(sen->f.sendsem);
+    int n = sendto(sen->f.ssocket, buf, sen->msg->msgLen(), 0, (struct sockaddr *) &(sen->f.server), sizeof(struct sockaddr_in));
     if (n == -1) {
         //errexit("recv sock handshake failed from second\n");
         printf("Error in send\n");
     }
-    sem_post(f.sendsem);
+    sem_post(sen->f.sendsem);
 }
 
 /*------------------------------------------------------------------------

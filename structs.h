@@ -26,3 +26,39 @@ struct eth_hdr {
     char other_info[8];
     int datalength;
 };
+
+struct tcp_hdr {
+    int hlp;
+    char other_info[4];
+    int datalength;
+};
+
+struct ftp_hdr {
+    int hlp;
+    char other_info[8];
+    int datalength;
+};
+
+struct telnet_hdr {
+    int hlp;
+    char other_info[8];
+    int datalength;
+};
+
+struct rdp_hdr {
+    int hlp;
+    char other_info[12];
+    int datalength;
+};
+
+struct dns_hdr {
+    int hlp;
+    char other_info[8];
+    int datalength;
+};
+
+struct udp_hdr {
+    int hlp;
+    char other_info[4];
+    int datalength;
+};
